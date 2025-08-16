@@ -161,130 +161,57 @@ function scrollToSection(sectionId) {
 
 // Template download functions
 function downloadSVGTemplate() {
-    try {
-        showNotification('Generating SVG template...', 'info');
-        
-        setTimeout(() => {
-            const svgContent = createHandwritingTemplate('svg');
-            const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'handwriting-template.svg';
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Clean up the URL object
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            
-            showNotification('SVG template downloaded successfully! Check your downloads folder.', 'success');
-        }, 500);
-        
-    } catch (error) {
-        console.error('Error downloading SVG template:', error);
-        showNotification('Error downloading template. Please try again.', 'error');
-    }
+    showNotification('Generating SVG template...', 'info');
+    fetch('/api/download-svg-template')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'handwriting-template.svg';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+            showNotification('SVG template downloaded successfully!', 'success');
+        })
+        .catch(error => {
+            console.error('Error downloading SVG template:', error);
+            showNotification('Error generating template. Please try again later.', 'error');
+        });
 }
 
 function downloadPDFTemplate() {
-    try {
-        showNotification('Generating PDF-compatible template...', 'info');
-        
-        setTimeout(() => {
-            // Create SVG with PDF-optimized settings
-            const svgContent = createHandwritingTemplate('pdf');
-            const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'handwriting-template-for-pdf.svg';
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            
-            showNotification('Template downloaded! Open in browser and print to PDF, or use an online SVG to PDF converter.', 'success');
-        }, 500);
-        
-    } catch (error) {
-        console.error('Error downloading PDF template:', error);
-        showNotification('Error downloading template. Please try again.', 'error');
-    }
-}
-
-function createHandwritingTemplate(format) {
-    const allChars = characters.uppercase + characters.lowercase + characters.numbers + characters.punctuation;
-    const cellSize = 120;
-    const margin = 40;
-    const cols = 10;
-    const rows = Math.ceil(allChars.length / cols);
-    
-    const width = cols * cellSize + (cols + 1) * margin;
-    const height = rows * cellSize + (rows + 1) * margin + 120; // Extra space for instructions
-    
-    let svgContent = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <style>
-            .grid-line { stroke: #cccccc; stroke-width: 1; fill: none; }
-            .cell-border { stroke: #666666; stroke-width: 2; fill: none; }
-            .center-line { stroke: #dddddd; stroke-width: 1; stroke-dasharray: 5,5; }
-            .instruction-text { font-family: Arial, sans-serif; font-size: 14px; fill: #333333; }
-            .title-text { font-family: Arial, sans-serif; font-size: 18px; fill: #333333; font-weight: bold; }
-            .character-label { font-family: Arial, sans-serif; font-size: 12px; fill: #999999; text-anchor: start; }
-        </style>
-    </defs>
-    
-    <!-- Background -->
-    <rect width="${width}" height="${height}" fill="white" stroke="#000000" stroke-width="1"/>
-    
-    <!-- Title -->
-    <text x="${width/2}" y="30" text-anchor="middle" class="title-text">
-        Handwriting Font Template
-    </text>
-    
-    <!-- Instructions -->
-    <text x="${width/2}" y="55" text-anchor="middle" class="instruction-text">
-        Write each character clearly in dark ink (black or blue) within the boxes below
-    </text>
-    <text x="${width/2}" y="75" text-anchor="middle" class="instruction-text">
-        Keep characters centered and avoid touching the borders • Scan at 300+ DPI
-    </text>
-`;
-
-    // Generate character cells
-    for (let i = 0; i < allChars.length; i++) {
-        const row = Math.floor(i / cols);
-        const col = i % cols;
-        const x = margin + col * (cellSize + margin);
-        const y = 100 + margin + row * (cellSize + margin);
-        
-        // Cell border
-        svgContent += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" class="cell-border"/>`;
-        
-        // Center guidelines
-        svgContent += `<line x1="${x + cellSize/2}" y1="${y + 10}" x2="${x + cellSize/2}" y2="${y + cellSize - 10}" class="center-line"/>`;
-        svgContent += `<line x1="${x + 10}" y1="${y + cellSize/2}" x2="${x + cellSize - 10}" y2="${y + cellSize/2}" class="center-line"/>`;
-        
-        // Character label (small, in top-left corner)
-        svgContent += `<text x="${x + 5}" y="${y + 15}" class="character-label">${allChars[i]}</text>`;
-    }
-    
-    // Footer instructions
-    const footerY = height - 40;
-    svgContent += `<text x="${width/2}" y="${footerY}" text-anchor="middle" class="instruction-text">
-        After filling out, scan and upload to generate your custom font
-    </text>`;
-    
-    svgContent += '</svg>';
-    
-    return svgContent;
+    showNotification('Generating PDF template...', 'info');
+    fetch('/api/download-pdf-template')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'handwriting-template.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+            showNotification('PDF template downloaded successfully!', 'success');
+        })
+        .catch(error => {
+            console.error('Error downloading PDF template:', error);
+            showNotification('Error generating template. Please try again later.', 'error');
+        });
 }
 
 // File upload handling
@@ -445,103 +372,71 @@ function showDemo() {
     }, 1000);
 }
 
-// Processing simulation
-function startProcessing() {
+// Real processing function
+async function startProcessing() {
     if (!uploadedImage) {
         showNotification('Please upload an image first.', 'error');
         return;
     }
-    
+
     // Hide upload section and show processing
     const uploadSection = document.getElementById('upload');
     const processingSection = document.getElementById('processing');
     
-    if (uploadSection && processingSection) {
-        uploadSection.classList.add('hidden');
-        processingSection.classList.remove('hidden');
+    uploadSection.classList.add('hidden');
+    processingSection.classList.remove('hidden');
+    scrollToSection('processing');
+    showNotification('Processing started... This may take a minute.', 'info');
+    
+    // For simplicity, we'll use a generic loading message instead of the multi-step progress bar.
+    // The multi-step progress bar can be re-integrated later with a more advanced backend (e.g., using WebSockets or polling).
+    document.getElementById('progressPercent').textContent = 'Processing...';
+    document.getElementById('progressFill').style.width = '50%'; // Indeterminate progress
+    document.getElementById('processing-steps').style.display = 'none'; // Hide the detailed steps
+
+    try {
+        // Convert data URL to Blob
+        const fetchRes = await fetch(uploadedImage);
+        const blob = await fetchRes.blob();
         
-        processingStartTime = Date.now();
-        runProcessingSteps();
-        
-        // Scroll to processing section
-        scrollToSection('processing');
-        showNotification('Processing started...', 'info');
-    }
-}
+        // Create FormData and append the image
+        const formData = new FormData();
+        formData.append('image', blob, 'handwriting.png');
 
-function runProcessingSteps() {
-    let totalDuration = processingSteps.reduce((sum, step) => sum + step.duration, 0);
-    let currentTime = 0;
-    
-    processingSteps.forEach((step, index) => {
-        setTimeout(() => {
-            updateProcessingStep(index + 1, 'active');
-            updateProgress(currentTime, totalDuration);
-            
-            setTimeout(() => {
-                updateProcessingStep(index + 1, 'completed');
-                currentTime += step.duration;
-                updateProgress(currentTime, totalDuration);
-                
-                if (index === processingSteps.length - 1) {
-                    setTimeout(() => completeProcessing(), 500);
-                }
-            }, step.duration);
-        }, currentTime);
-        
-        currentTime += step.duration;
-    });
-}
+        // Make the API call
+        const response = await fetch('/api/process-image', {
+            method: 'POST',
+            body: formData,
+        });
 
-function updateProcessingStep(stepNumber, status) {
-    const step = document.getElementById(`step${stepNumber}`);
-    if (!step) return;
-    
-    const statusElement = step.querySelector('.step-status');
-    
-    // Remove previous classes
-    step.classList.remove('active', 'completed');
-    
-    if (status === 'active') {
-        step.classList.add('active');
-        if (statusElement) statusElement.textContent = 'Processing...';
-    } else if (status === 'completed') {
-        step.classList.add('completed');
-        if (statusElement) statusElement.textContent = 'Completed ✓';
-    }
-}
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Processing failed');
+        }
 
-function updateProgress(current, total) {
-    const percentage = Math.round((current / total) * 100);
-    const progressFill = document.getElementById('progressFill');
-    const progressPercent = document.getElementById('progressPercent');
-    const progressTime = document.getElementById('progressTime');
-    
-    if (progressFill) progressFill.style.width = `${percentage}%`;
-    if (progressPercent) progressPercent.textContent = `${percentage}%`;
-    
-    if (progressTime) {
-        const remaining = Math.max(0, total - current);
-        const remainingSeconds = Math.round(remaining / 1000);
-        progressTime.textContent = `Time remaining: ${remainingSeconds}s`;
-    }
-}
+        const result = await response.json();
 
-function completeProcessing() {
-    const processingTime = Math.round((Date.now() - processingStartTime) / 1000);
-    const processingTimeElement = document.getElementById('processingTime');
-    if (processingTimeElement) {
-        processingTimeElement.textContent = `${processingTime}s`;
-    }
-    
-    const processingSection = document.getElementById('processing');
-    const resultsSection = document.getElementById('results');
-    
-    if (processingSection && resultsSection) {
+        // Update the download button to link to the real font file
+        const downloadTTFBtn = document.getElementById('downloadTTFBtn');
+        downloadTTFBtn.dataset.fontUrl = result.font_url; // Store the URL
+
+        // The OTF button is not supported by the backend right now, so we'll disable it.
+        const downloadOTFBtn = document.getElementById('downloadOTFBtn');
+        downloadOTFBtn.disabled = true;
+        downloadOTFBtn.title = "OTF format is not currently supported.";
+
+        // Show the results section
         processingSection.classList.add('hidden');
-        resultsSection.classList.remove('hidden');
+        document.getElementById('results').classList.remove('hidden');
         scrollToSection('results');
-        showNotification('Font generated successfully! You can now preview and download it.', 'success');
+        showNotification('Font generated successfully!', 'success');
+
+    } catch (error) {
+        console.error('Error during processing:', error);
+        showNotification(`An error occurred: ${error.message}`, 'error');
+        // Reset to upload section
+        processingSection.classList.add('hidden');
+        uploadSection.classList.remove('hidden');
     }
 }
 
@@ -599,58 +494,39 @@ function populateCharacterGrid() {
 
 // Font download functions
 function downloadFont() {
-    showNotification('Generating TTF font file...', 'info');
+    const downloadBtn = document.getElementById('downloadTTFBtn');
+    const fontUrl = downloadBtn.dataset.fontUrl;
     
-    setTimeout(() => {
-        const fontData = generateSimulatedFont('ttf');
-        const blob = new Blob([fontData], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'my-handwriting-font.ttf';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        showNotification('TTF font downloaded successfully! Check your downloads folder.', 'success');
-    }, 800);
+    if (fontUrl) {
+        // Since the backend will provide the file, we can just link to it.
+        // However, to control the filename, we'll fetch the blob and download it.
+        showNotification('Preparing font for download...', 'info');
+        fetch(fontUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'my-handwriting-font.ttf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+                showNotification('Font downloaded!', 'success');
+            })
+            .catch(err => {
+                console.error('Download failed', err);
+                showNotification('Could not download font.', 'error');
+            });
+    } else {
+        showNotification('Font URL not found. Please process an image first.', 'error');
+    }
 }
 
 function downloadFontOTF() {
-    showNotification('Generating OTF font file...', 'info');
-    
-    setTimeout(() => {
-        const fontData = generateSimulatedFont('otf');
-        const blob = new Blob([fontData], { type: 'application/octet-stream' });
-        const url = URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'my-handwriting-font.otf';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        showNotification('OTF font downloaded successfully! Check your downloads folder.', 'success');
-    }, 800);
-}
-
-function generateSimulatedFont(format) {
-    const header = format === 'ttf' ? 'TTF Font File' : 'OTF Font File';
-    const timestamp = new Date().toISOString();
-    const metadata = `${header}\n\nGenerated: ${timestamp}\nCharacters: 62\nFormat: ${format.toUpperCase()}\nFont Name: My Handwriting Font\n\n`;
-    
-    // Add some binary-like data to make it look more realistic
-    const binaryData = new Array(1000).fill(0).map(() => 
-        String.fromCharCode(Math.floor(Math.random() * 256))
-    ).join('');
-    
-    return metadata + '[Font binary data]\n' + binaryData;
+    // This format is not supported by the backend in this version.
+    showNotification('OTF format is not currently supported.', 'info');
 }
 
 function createAnotherFont() {
