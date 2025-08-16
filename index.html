@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Font Generator - Transform Your Handwriting into Digital Fonts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <h1 class="header__title">Handwriting Font Generator</h1>
+                <p class="header__subtitle">Transform your handwriting into professional digital fonts</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero__content">
+                <h2 class="hero__title">Create Custom Fonts from Your Handwriting</h2>
+                <p class="hero__description">Generate professional TTF and OTF fonts from your handwriting in just 4 simple steps. Perfect for personal projects, branding, or creative work.</p>
+                <div class="hero__actions">
+                    <button class="btn btn--primary btn--lg" id="getStartedBtn">Get Started</button>
+                    <button class="btn btn--outline btn--lg" id="seeDemoBtn">See Demo</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h3 class="features__title">How It Works</h3>
+            <div class="features__grid">
+                <div class="feature-card">
+                    <div class="feature-card__number">1</div>
+                    <h4 class="feature-card__title">Download Template</h4>
+                    <p class="feature-card__description">Get our A4 template with character grids for optimal font generation</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__number">2</div>
+                    <h4 class="feature-card__title">Fill & Scan</h4>
+                    <p class="feature-card__description">Write clearly in each box using dark ink, then scan at 300+ DPI</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__number">3</div>
+                    <h4 class="feature-card__title">Upload & Process</h4>
+                    <p class="feature-card__description">Upload your image and watch as we convert it to vector format</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__number">4</div>
+                    <h4 class="feature-card__title">Download Font</h4>
+                    <p class="feature-card__description">Get your custom TTF/OTF font ready for use in any application</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Template Download Section -->
+    <section id="templates" class="templates">
+        <div class="container">
+            <h3 class="templates__title">Step 1: Download Your Template</h3>
+            <p class="templates__description">Choose your preferred template format. Both options include A4-sized grids for all 62 characters.</p>
+            
+            <div class="templates__options">
+                <div class="template-option">
+                    <div class="template-option__header">
+                        <h4>SVG Template</h4>
+                        <span class="status status--success">Recommended</span>
+                    </div>
+                    <p>Vector-based template with perfect scaling and print quality</p>
+                    <ul class="template-option__features">
+                        <li>✓ Crisp lines at any size</li>
+                        <li>✓ Smaller file size</li>
+                        <li>✓ Best for digital printing</li>
+                    </ul>
+                    <button class="btn btn--primary" id="downloadSVGBtn">Download SVG Template</button>
+                </div>
+                
+                <div class="template-option">
+                    <div class="template-option__header">
+                        <h4>PDF Template</h4>
+                        <span class="status status--info">Alternative</span>
+                    </div>
+                    <p>Print-ready PDF format compatible with all printers</p>
+                    <ul class="template-option__features">
+                        <li>✓ Universal compatibility</li>
+                        <li>✓ Print-ready format</li>
+                        <li>✓ Works on any device</li>
+                    </ul>
+                    <button class="btn btn--outline" id="downloadPDFBtn">Download PDF Template</button>
+                </div>
+            </div>
+
+            <div class="template-preview">
+                <h4>Template Preview</h4>
+                <div class="template-preview__container">
+                    <div class="template-grid">
+                        <div class="template-cell">A</div>
+                        <div class="template-cell">B</div>
+                        <div class="template-cell">C</div>
+                        <div class="template-cell">...</div>
+                    </div>
+                    <p class="template-preview__note">62 character boxes including A-Z, a-z, 0-9, and basic punctuation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="upload">
+        <div class="container">
+            <h3 class="upload__title">Step 2: Upload Your Handwriting</h3>
+            <p class="upload__description">Upload your completed template. Supported formats: PNG, JPG, JPEG (minimum 300 DPI recommended)</p>
+            
+            <div class="upload__area" id="uploadArea">
+                <div class="upload__content">
+                    <div class="upload__icon">📁</div>
+                    <h4>Drop your image here or click to browse</h4>
+                    <p>PNG, JPG, JPEG up to 10MB</p>
+                </div>
+                <input type="file" id="fileInput" accept=".png,.jpg,.jpeg" style="display: none;">
+            </div>
+
+            <div class="upload__preview hidden" id="uploadPreview">
+                <h4>Image Preview</h4>
+                <div class="preview-container">
+                    <img id="previewImage" alt="Uploaded handwriting template">
+                    <div class="preview-controls">
+                        <button class="btn btn--sm btn--outline" id="zoomOutBtn">Zoom Out</button>
+                        <button class="btn btn--sm btn--outline" id="zoomInBtn">Zoom In</button>
+                        <button class="btn btn--sm btn--secondary" id="removeImageBtn">Remove Image</button>
+                    </div>
+                </div>
+                <button class="btn btn--primary btn--lg" id="processBtn">Process Handwriting</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Processing Section -->
+    <section id="processing" class="processing hidden">
+        <div class="container">
+            <h3 class="processing__title">Step 3: Processing Your Handwriting</h3>
+            <p class="processing__description">Converting your handwriting to a professional font...</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progressPercent">0%</span>
+                    <span id="progressTime">Estimated time: 30-40 seconds</span>
+                </div>
+            </div>
+
+            <div class="processing-steps">
+                <div class="processing-step" id="step1">
+                    <div class="step-icon">⚙️</div>
+                    <div class="step-content">
+                        <h4>Image Preprocessing</h4>
+                        <p>Converting to grayscale and applying binary threshold</p>
+                        <div class="step-status">Waiting...</div>
+                    </div>
+                </div>
+                
+                <div class="processing-step" id="step2">
+                    <div class="step-icon">🔍</div>
+                    <div class="step-content">
+                        <h4>Character Segmentation</h4>
+                        <p>Isolating individual characters using contour detection</p>
+                        <div class="step-status">Waiting...</div>
+                    </div>
+                </div>
+                
+                <div class="processing-step" id="step3">
+                    <div class="step-icon">📐</div>
+                    <div class="step-content">
+                        <h4>Vectorization</h4>
+                        <p>Converting characters to scalable SVG format</p>
+                        <div class="step-status">Waiting...</div>
+                    </div>
+                </div>
+                
+                <div class="processing-step" id="step4">
+                    <div class="step-icon">🔤</div>
+                    <div class="step-content">
+                        <h4>Font Generation</h4>
+                        <p>Assembling glyphs into professional font file</p>
+                        <div class="step-status">Waiting...</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn--outline" id="cancelProcessingBtn">Cancel Processing</button>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results hidden">
+        <div class="container">
+            <h3 class="results__title">Step 4: Your Custom Font is Ready!</h3>
+            <p class="results__description">Preview your font and download it to use in any application</p>
+            
+            <div class="font-preview">
+                <div class="font-preview__controls">
+                    <input type="text" class="form-control" id="previewText" value="The quick brown fox jumps over the lazy dog." placeholder="Type your preview text...">
+                    <input type="range" id="fontSizeSlider" min="16" max="72" value="32">
+                    <span id="fontSizeLabel">32px</span>
+                </div>
+                
+                <div class="font-preview__display" id="fontPreviewDisplay">
+                    The quick brown fox jumps over the lazy dog.
+                </div>
+                
+                <div class="character-grid">
+                    <h4>Character Preview</h4>
+                    <div class="character-grid__container" id="characterGrid">
+                        <!-- Characters will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="font-info">
+                <div class="font-info__stats">
+                    <div class="stat">
+                        <span class="stat__value">62</span>
+                        <span class="stat__label">Characters</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat__value" id="processingTime">35s</span>
+                        <span class="stat__label">Processing Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat__value">~250KB</span>
+                        <span class="stat__label">File Size</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results__actions">
+                <button class="btn btn--primary btn--lg" id="downloadTTFBtn">Download Font (TTF)</button>
+                <button class="btn btn--outline btn--lg" id="downloadOTFBtn">Download Font (OTF)</button>
+                <button class="btn btn--secondary" id="createAnotherBtn">Create Another Font</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h3 class="faq__title">Frequently Asked Questions</h3>
+            <div class="faq__list">
+                <div class="faq-item">
+                    <button class="faq-item__question">
+                        What image format should I use?
+                        <span class="faq-item__icon">+</span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>PNG is recommended for best quality, but JPG and JPEG are also supported. Use high resolution (300 DPI or higher) for optimal results.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-item__question">
+                        How should I write the characters?
+                        <span class="faq-item__icon">+</span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>Write clearly in dark ink (black or blue) on white paper. Keep characters centered in each box and avoid touching the borders.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-item__question">
+                        Can I use the font commercially?
+                        <span class="faq-item__icon">+</span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>Yes! The generated font is based on your own handwriting, so you own full rights to use it commercially or personally.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-item__question">
+                        What if some characters don't look right?
+                        <span class="faq-item__icon">+</span>
+                    </button>
+                    <div class="faq-item__answer">
+                        <p>You can regenerate the font with a new handwriting sample. For best results, ensure consistent character size and clear writing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <p>&copy; 2025 Handwriting Font Generator. Transform your handwriting into digital fonts.</p>
+                <div class="footer__links">
+                    <a href="#templates">Templates</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="#" target="_blank">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

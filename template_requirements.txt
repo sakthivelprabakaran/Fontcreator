@@ -1,0 +1,3 @@
+
+# Additional requirements for template generation
+reportlab==4.0.7
